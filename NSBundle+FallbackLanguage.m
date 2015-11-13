@@ -28,22 +28,15 @@
 @implementation NSBundle (FallbackLanguage)
 
 - (NSString *)localizedStringForKey:(NSString *)key replaceValue:(NSString *)comment {
-    
+    NSString *fallbackLanguage = @"en";
     NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
-    
-    NSString *localizedString;
-    if ([@[@"en", @"de", @"fr"] containsObject:language]){
-        localizedString = [[NSBundle mainBundle] localizedStringForKey:key value:@"" table:nil];
-    }
-    else{
-        NSString *fallbackLanguage = @"en";
+    NSString *localizedString = [[NSBundle mainBundle] localizedStringForKey:key value:@"" table:nil];
+    if (![language isEqualToString:fallbackLanguage] && [localizedString isEqualToString:key]) {
         NSString *falbackBundlePath = [[NSBundle mainBundle] pathForResource:fallbackLanguage ofType:@"lproj"];
         NSBundle *fallbackBundle = [NSBundle bundleWithPath:falbackBundlePath];
         NSString *fallbackString = [fallbackBundle localizedStringForKey:key value:comment table:nil];
-        
         localizedString = fallbackString;
     }
-    
     return localizedString;
 }
 
